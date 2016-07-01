@@ -8,7 +8,7 @@ public class GameController : MonoBehaviour {
 		new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, 
 		new int[]{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}, 
 		new int[]{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}, 
-		new int[]{1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 0, 0, 0, 0, 0, 1}, 
+		new int[]{1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 0, 0, 0, 4, 0, 1}, 
 		new int[]{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1}, 
 		new int[]{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1}, 
 		new int[]{1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, 
@@ -41,6 +41,8 @@ public class GameController : MonoBehaviour {
 	public Transform wall;
 	public Transform player;
 	public Transform orb;
+	public Transform goal;
+	private ParticleSystem goalPS;
 
 	void Awake() {
 		_instance = this;
@@ -86,6 +88,10 @@ public class GameController : MonoBehaviour {
 					toCreate = orb;
 					break;
 
+				case 4:
+					toCreate = goal;
+					break;
+
 				default:
 					print("Invalid number: " + (level[yPos][xPos]).ToString());
 					break;	
@@ -93,6 +99,10 @@ public class GameController : MonoBehaviour {
 
 				if(toCreate != null) {
 					Transform newObject = Instantiate(toCreate, new Vector3(xPos, (level.Length - yPos), 0), toCreate.rotation) as Transform;
+
+					if(toCreate == goal) {
+						goalPS = newObject.gameObject.GetComponent<ParticleSystem>();
+					}
 
 					// Set the object's parent to the DynamicObjects
 					// variable so it doesn't clutter our Hierachy
@@ -106,5 +116,10 @@ public class GameController : MonoBehaviour {
 	public void CollectedOrb() {
 		orbsCollected++;
 		scoreText.text = "Orbs: " + orbsCollected + "/" + orbsTotal;
+
+		if(orbsCollected >= orbsTotal)
+		{
+			goalPS.Play();
+		}
 	}
 }
