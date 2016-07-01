@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour {
 
@@ -31,13 +32,30 @@ public class GameController : MonoBehaviour {
 		new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1} 
 	};
 
+	public static GameController _instance;
+	public Text scoreText;
+	private int orbsCollected;
+	private int orbsTotal;
+
 	[Header("Object References")]
 	public Transform wall;
 	public Transform player;
 	public Transform orb;
 
+	void Awake() {
+		_instance = this;
+	}
+
 	void Start() {
 		BuildLevel ();
+
+		GameObject[] orbs;
+		orbs = GameObject.FindGameObjectsWithTag("Orb");
+
+		orbsCollected = 0;
+		orbsTotal = orbs.Length;
+
+		scoreText.text = "Orbs: " + orbsCollected + "/" + orbsTotal;
 	}
 
 	void BuildLevel () {
@@ -83,5 +101,10 @@ public class GameController : MonoBehaviour {
 
 			}
 		}
+	}
+
+	public void CollectedOrb() {
+		orbsCollected++;
+		scoreText.text = "Orbs: " + orbsCollected + "/" + orbsTotal;
 	}
 }
